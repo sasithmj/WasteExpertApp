@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:wasteexpert/pages/home_page.dart';
+import 'package:wasteexpert/pages/authentication/login.dart';
+import 'package:wasteexpert/pages/authentication/register.dart';
+import 'package:wasteexpert/pages/home.dart';
+import 'package:wasteexpert/pages/main_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,6 +23,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
-
