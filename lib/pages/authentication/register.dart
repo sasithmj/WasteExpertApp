@@ -20,6 +20,7 @@ class _RegistrationState extends State<Registration> {
           'Registration',
           style: TextStyle(color: Colors.white),
         ),
+        foregroundColor: Colors.white,
         backgroundColor: const Color.fromARGB(255, 23, 107, 135),
       ),
       body: Center(
@@ -226,7 +227,20 @@ class _RegistrationState extends State<Registration> {
                                 color: Color.fromARGB(255, 23, 107, 135)),
                           ),
                         ),
+                        
                       ],
+                    ),
+                    TextButton.icon(
+                      icon: Image.asset(
+                        "assets/googleIcon.png",
+                        width: 24,
+                        height: 24,
+                      ),
+                      onPressed: () => {},
+                      label: const Text(
+                        "Continue with google",
+                        style: TextStyle(color: Colors.black54),
+                      ),
                     ),
                   ],
                 ),

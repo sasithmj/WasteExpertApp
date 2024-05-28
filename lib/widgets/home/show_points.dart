@@ -53,10 +53,20 @@ class ShowPoints extends StatelessWidget {
             color: Colors.amber,
             minHeight: 10,
             value: 0.2,
-            semanticsLabel: 'Linear progress indicator',
+            semanticsLabel: 'Reward Points',
+          ),
+          Container(
+            alignment: Alignment.centerRight,
+            padding: EdgeInsets.symmetric(vertical: 5),
+            child: const Text(
+              "2500",
+              style: TextStyle(
+                color: Color.fromARGB(255, 237, 237, 237),
+              ),
+            ),
           ),
           const SizedBox(
-            height: 24,
+            height: 8,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,

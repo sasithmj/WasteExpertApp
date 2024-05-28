@@ -1,6 +1,7 @@
+// home_page.dart
 import 'package:flutter/material.dart';
 import 'package:wasteexpert/pages/home.dart';
-import 'package:wasteexpert/widgets/home/week_number.dart';
+import 'package:wasteexpert/pages/waste_scheduling/schedule_waste.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,21 +13,15 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    Home(),
-    Text(
-      'Index 1: Business',
-    ),
-    Text(
-      'Index 2: School',
-    ),
-    Text(
-      'Index 3: School',
-    ),
-    Text(
-      'Index 3: School',
-    ),
+  late final List<Widget> _widgetOptions = <Widget>[
+    Home(
+        onRequestPickup: () => _onItemTapped(2)), // Change to the desired index
+    Text('Index 1: Business'),
+    SheduleWaste(),
+    Text('Index 2: School'),
+    Text('Index 4: Profiles'),
   ];
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -37,7 +32,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('WasteExpert'),
+        title: Image.asset(
+          "assets/horizontal_logo_light.png",
+          height: 70,
+        ),
       ),
       body: Container(
         child: _widgetOptions.elementAt(_selectedIndex),
@@ -54,9 +52,10 @@ class _HomePageState extends State<HomePage> {
         elevation: 24,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              label: 'Home',
-              backgroundColor: Colors.white),
+            icon: Icon(Icons.home_outlined),
+            label: 'Home',
+            backgroundColor: Colors.white,
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.location_on_outlined),
             label: 'Bins',

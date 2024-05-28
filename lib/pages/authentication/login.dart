@@ -17,13 +17,13 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Login',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: const Color.fromARGB(255, 23, 107, 135),
-      ),
+      // appBar: AppBar(
+      //   title: const Text(
+      //     'Login',
+      //     style: TextStyle(color: Colors.white),
+      //   ),
+      //   backgroundColor: const Color.fromARGB(255, 23, 107, 135),
+      // ),
       body: Center(
         child: SingleChildScrollView(
           child: Container(
@@ -36,10 +36,32 @@ class _LoginState extends State<Login> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        SizedBox(
+                          height: 250,
+                          child: Center(
+                            child: Image.asset(
+                              "assets/logo.png",
+                              // width: 500,
+                            ),
+                          ),
+                        ),
+                        const Text(
+                          "Welcome to WastExpert.",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w800, fontSize: 24),
+                        ),
+                        const Text(
+                          "Empowering Cleaner, Greener Communities.",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w300, fontSize: 14),
+                        ),
+                        const SizedBox(
+                          height: 30,
+                        ),
                         const Text(
                           "Email",
                           style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 20),
+                              fontWeight: FontWeight.w400, fontSize: 18),
                         ),
                         Container(
                           decoration: BoxDecoration(
@@ -80,7 +102,7 @@ class _LoginState extends State<Login> {
                         const Text(
                           "Password",
                           style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 20),
+                              fontWeight: FontWeight.w400, fontSize: 18),
                         ),
                         Container(
                           decoration: BoxDecoration(

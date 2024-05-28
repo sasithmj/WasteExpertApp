@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class RequestPickup extends StatelessWidget {
-  const RequestPickup({super.key});
+  final Function onRequestPickup;
+
+  const RequestPickup({super.key, required this.onRequestPickup});
 
   @override
   Widget build(BuildContext context) {
@@ -17,34 +19,34 @@ class RequestPickup extends StatelessWidget {
           ),
           color: Color.fromARGB(255, 23, 107, 135),
           borderRadius: BorderRadius.all(Radius.circular(8.0))),
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             "Request To PickUp",
             style: TextStyle(
                 color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16),
           ),
-          SizedBox(
+          const SizedBox(
             height: 12,
           ),
-          Text(
+          const Text(
             "Let's Make Our Environment Clean.",
             style: TextStyle(
                 color: Colors.white, fontWeight: FontWeight.w400, fontSize: 12),
           ),
-          SizedBox(
+          const SizedBox(
             height: 24,
           ),
           ElevatedButton(
-              onPressed: null,
-              style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStatePropertyAll<Color>(Colors.white)),
-              child: Text(
-                "Request PickUp",
-                style: TextStyle(color: Color.fromARGB(255, 23, 107, 135)),
-              ))
+            onPressed: () => onRequestPickup(),
+            style: const ButtonStyle(
+                backgroundColor: MaterialStatePropertyAll<Color>(Colors.white)),
+            child: const Text(
+              "Request PickUp",
+              style: TextStyle(color: Color.fromARGB(255, 23, 107, 135)),
+            ),
+          )
         ],
       ),
     );
