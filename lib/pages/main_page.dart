@@ -1,10 +1,14 @@
 // home_page.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:wasteexpert/pages/home.dart';
 import 'package:wasteexpert/pages/waste_scheduling/schedule_waste.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final token;
+  const HomePage({@required this.token, super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -12,12 +16,20 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  late String userName;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Map<String, dynamic> jwtToken = JwtDecoder.decode(widget.token);
+    userName = jwtToken['name'];
+  }
 
   late final List<Widget> _widgetOptions = <Widget>[
     Home(
         onRequestPickup: () => _onItemTapped(2)), // Change to the desired index
     Text('Index 1: Business'),
-    SheduleWaste(),
+    ScheduleWaste(),
     Text('Index 2: School'),
     Text('Index 4: Profiles'),
   ];
@@ -36,6 +48,20 @@ class _HomePageState extends State<HomePage> {
           "assets/horizontal_logo_light.png",
           height: 70,
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Center(
+              child: Text(
+                userName,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       body: Container(
         child: _widgetOptions.elementAt(_selectedIndex),

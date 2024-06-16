@@ -1,5 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:wasteexpert/pages/authentication/login.dart';
+import 'package:http/http.dart' as http;
+import 'package:wasteexpert/Config.url.dart' as UrlConfig;
+import 'package:wasteexpert/pages/home.dart';
+import 'package:wasteexpert/pages/main_page.dart';
+import 'package:wasteexpert/widgets/authentication/CumtomFormField.dart';
 
 class Registration extends StatefulWidget {
   const Registration({Key? key}) : super(key: key);
@@ -10,6 +17,117 @@ class Registration extends StatefulWidget {
 
 class _RegistrationState extends State<Registration> {
   final _formKey = GlobalKey<FormState>();
+
+  // Controllers for text fields
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _mobileController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+
+  bool _rememberMe = false;
+  bool _isLoading = false; // Loading state variable
+
+  @override
+  void dispose() {
+    // Dispose the controllers when the widget is disposed
+    _nameController.dispose();
+    _emailController.dispose();
+    _mobileController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  void _signUp() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true; // Set loading state to true
+      });
+
+      // Retrieve the values from the controllers
+      String name = _nameController.text;
+      String email = _emailController.text;
+      String mobile = _mobileController.text;
+      String password = _passwordController.text;
+      String confirmPassword = _confirmPasswordController.text;
+
+      if (password != confirmPassword) {
+        // Show an error message if passwords do not match
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Passwords do not match.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        setState(() {
+          _isLoading = false; // Set loading state to false
+        });
+        return;
+      } else {
+        var regBody = {
+          "name": name,
+          "email": email,
+          "password": password,
+          "mobile": mobile,
+        };
+        try {
+          var response = await http.post(
+            Uri.parse(UrlConfig.registrationUrl),
+            headers: {"Content-Type": "application/json"},
+            body: jsonEncode(regBody),
+          );
+
+          setState(() {
+            _isLoading = false; // Set loading state to false
+          });
+
+          if (response.statusCode == 201) {
+            // Success response
+            var responseBody = jsonDecode(response.body);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Registration successful!'),
+                backgroundColor: Colors.green,
+              ),
+            );
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Login()),
+            );
+          } else if (response.statusCode == 400) {
+            // User registration failed
+            var responseBody = jsonDecode(response.body);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Registration failed: ${responseBody['error']}'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          } else {
+            // Other error responses
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Registration failed. Please try again.'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        } catch (e) {
+          setState(() {
+            _isLoading = false; // Set loading state to false
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,146 +147,78 @@ class _RegistrationState extends State<Registration> {
             child: Form(
               key: _formKey,
               child: Container(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Name",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 20),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(25.0),
-                            color: Color.fromARGB(255, 243, 247, 247),
-                          ),
-                          child: TextFormField(
-                            decoration: const InputDecoration(
-                              hintText: 'Enter your name',
-                              hintStyle: TextStyle(color: Colors.black26),
-                              border: InputBorder.none,
-                              contentPadding:
-                                  EdgeInsets.symmetric(horizontal: 15.0),
-                            ),
-                            validator: (String? value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your name.';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                      ],
+                    CustomFormField(
+                      controller: _nameController,
+                      label: "Name",
+                      hintText: "Enter your name",
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your name.';
+                        }
+                        return null;
+                      },
+                    ),
+                    CustomFormField(
+                      controller: _emailController,
+                      label: "Email",
+                      hintText: "Enter your Email",
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your Email.';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(
                       height: 26,
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Mobile Number",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 20),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(25.0),
-                            color: Color.fromARGB(255, 243, 247, 247),
-                          ),
-                          child: TextFormField(
-                            decoration: const InputDecoration(
-                              hintText: 'Enter your mobile number',
-                              hintStyle: TextStyle(color: Colors.black26),
-                              border: InputBorder.none,
-                              contentPadding:
-                                  EdgeInsets.symmetric(horizontal: 15.0),
-                            ),
-                            keyboardType: TextInputType.phone,
-                            validator: (String? value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your mobile number.';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                      ],
+                    CustomFormField(
+                      controller: _mobileController,
+                      label: "Mobile Number",
+                      hintText: "Enter your mobile number",
+                      keyboardType: TextInputType.phone,
+                      maxLength: 10,
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your mobile number.';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(
                       height: 26,
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Password",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 20),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(25.0),
-                            color: const Color.fromARGB(255, 243, 247, 247),
-                          ),
-                          child: TextFormField(
-                            decoration: const InputDecoration(
-                              hintText: 'Enter your password',
-                              hintStyle: TextStyle(color: Colors.black26),
-                              border: InputBorder.none,
-                              contentPadding:
-                                  EdgeInsets.symmetric(horizontal: 15.0),
-                            ),
-                            obscureText: true,
-                            validator: (String? value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Password is required.';
-                              } else if (value.length < 8) {
-                                return 'Password must be at least 8 characters long.';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                      ],
+                    CustomFormField(
+                      controller: _passwordController,
+                      label: "Password",
+                      hintText: "Enter your password",
+                      obscureText: true,
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Password is required.';
+                        } else if (value.length < 8) {
+                          return 'Password must be at least 8 characters long.';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(
                       height: 26,
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Confirm Password",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 20),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(25.0),
-                            color: const Color.fromARGB(255, 243, 247, 247),
-                          ),
-                          child: TextFormField(
-                            decoration: const InputDecoration(
-                              hintText: 'Re-enter your password',
-                              hintStyle: TextStyle(color: Colors.black26),
-                              border: InputBorder.none,
-                              contentPadding:
-                                  EdgeInsets.symmetric(horizontal: 15.0),
-                            ),
-                            obscureText: true,
-                            validator: (String? value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please confirm your password.';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                      ],
+                    CustomFormField(
+                      controller: _confirmPasswordController,
+                      label: "Confirm Password",
+                      hintText: "Re-enter your password",
+                      obscureText: true,
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please confirm your password.';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(
                       height: 16,
@@ -176,13 +226,14 @@ class _RegistrationState extends State<Registration> {
                     Row(
                       children: [
                         Checkbox(
-                          value:
-                              false, // Change this to store the checkbox value
+                          value: _rememberMe,
                           onChanged: (bool? value) {
-                            // Handle checkbox state change
+                            setState(() {
+                              _rememberMe = value!;
+                            });
                           },
                         ),
-                        Text("Remember me"),
+                        const Text("Remember me"),
                       ],
                     ),
                     const SizedBox(
@@ -203,11 +254,20 @@ class _RegistrationState extends State<Registration> {
                           },
                         ),
                       ),
-                      onPressed: () => {},
-                      child: const Text(
-                        "Sign Up",
-                        style: TextStyle(color: Colors.white),
-                      ),
+                      onPressed: _isLoading ? null : _signUp,
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                backgroundColor: Colors.white,
+                                color: Colors.grey,
+                              ),
+                            )
+                          : const Text(
+                              "Sign Up",
+                              style: TextStyle(color: Colors.white),
+                            ),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -227,7 +287,6 @@ class _RegistrationState extends State<Registration> {
                                 color: Color.fromARGB(255, 23, 107, 135)),
                           ),
                         ),
-                        
                       ],
                     ),
                     TextButton.icon(

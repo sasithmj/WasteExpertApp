@@ -36,6 +36,9 @@ dependencies:
   cupertino_icons: ^1.0.6
   intl: ^0.19.0
   dropdown_button2: ^2.3.8
+  http:
+  shared_preferences: ^2.0.0
+  jwt_decoder:
 
 dev_dependencies:
   flutter_test:
