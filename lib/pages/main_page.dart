@@ -1,14 +1,16 @@
-// home_page.dart
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:wasteexpert/pages/home.dart';
+import 'package:wasteexpert/pages/profile/Profile.dart';
 import 'package:wasteexpert/pages/waste_scheduling/schedule_waste.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class HomePage extends StatefulWidget {
-  final token;
-  const HomePage({@required this.token, super.key});
+  final String token; // Explicitly define the type
+  const HomePage({required this.token, super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -17,27 +19,108 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   late String userName;
+  late String userId;
+  late String email;
+  Position? _currentPosition;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     Map<String, dynamic> jwtToken = JwtDecoder.decode(widget.token);
     userName = jwtToken['name'];
+    userId = jwtToken['_id'];
+    email = jwtToken['email'];
+    _checkPermissions();
   }
 
   late final List<Widget> _widgetOptions = <Widget>[
-    Home(
-        onRequestPickup: () => _onItemTapped(2)), // Change to the desired index
+    Home(onRequestPickup: () => _onItemTapped(2)),
     Text('Index 1: Business'),
-    ScheduleWaste(),
+    ScheduleWaste(token: userId),
     Text('Index 2: School'),
-    Text('Index 4: Profiles'),
+    ProfileScreen(token: widget.token),
   ];
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  Future<void> _checkPermissions() async {
+    PermissionStatus permission = await Permission.location.status;
+    if (permission != PermissionStatus.granted) {
+      PermissionStatus result = await Permission.location.request();
+      if (result != PermissionStatus.granted) {
+        // Handle permission denied
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Location permission is required')),
+        );
+        _showLocationServiceDialog();
+      } else {
+        _checkLocationService();
+      }
+    } else {
+      _checkLocationService();
+    }
+  }
+
+  Future<void> _checkLocationService() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      _showLocationServiceDialog();
+    } else {
+      _getCurrentLocation();
+    }
+  }
+
+  Future<void> _showLocationServiceDialog() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Enable Location Service'),
+          content: const Text(
+              'Location services are disabled. Please enable them to proceed.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await Geolocator.openLocationSettings();
+              },
+              child: const Text('Enable'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _getCurrentLocation() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return;
+    }
+
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    setState(() {
+      _currentPosition = position;
+    });
+    print(_currentPosition);
   }
 
   @override
@@ -54,7 +137,7 @@ class _HomePageState extends State<HomePage> {
             child: Center(
               child: Text(
                 userName,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18,
                   color: Colors.black,
                 ),
@@ -63,12 +146,10 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Container(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
+      body: _widgetOptions.elementAt(_selectedIndex),
       floatingActionButton: FloatingActionButton(
         onPressed: () => {},
-        backgroundColor: Color.fromARGB(255, 23, 107, 135),
+        backgroundColor: const Color.fromARGB(255, 23, 107, 135),
         child: const Icon(
           Icons.photo_camera_outlined,
           color: Colors.white,
@@ -100,11 +181,11 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Color.fromARGB(255, 23, 107, 135),
+        selectedItemColor: const Color.fromARGB(255, 23, 107, 135),
         onTap: _onItemTapped,
         type: BottomNavigationBarType.shifting, // Shifting
         unselectedItemColor: Colors.grey,
-        unselectedLabelStyle: TextStyle(color: Colors.grey),
+        unselectedLabelStyle: const TextStyle(color: Colors.grey),
       ),
     );
   }

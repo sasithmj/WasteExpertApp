@@ -1,9 +1,13 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:http/http.dart' as http;
+import 'package:wasteexpert/controllers/schedule_controller.dart';
+import 'dart:convert';
+import 'package:wasteexpert/models/WasteSchedule/WasteScheduleModel.dart';
 
+// ScheduleWaste widget
 class ScheduleWaste extends StatefulWidget {
-  const ScheduleWaste({super.key});
+  final token;
+  const ScheduleWaste({@required this.token, super.key});
 
   @override
   State<ScheduleWaste> createState() => _ScheduleWasteState();
@@ -34,8 +38,8 @@ class _ScheduleWasteState extends State<ScheduleWaste> {
   void _addItem() {
     if (selectedValue != null) {
       setState(() {
-        wasteItems
-            .add(WasteItem(type: selectedValue!, weight: _currentSliderValue));
+        wasteItems.add(WasteItem(
+            wastetype: selectedValue!, quantity: _currentSliderValue));
         // Reset the form
         selectedValue = null;
         _currentSliderValue = 20;
@@ -54,7 +58,7 @@ class _ScheduleWasteState extends State<ScheduleWaste> {
   }
 
   double _totalWeight() {
-    return wasteItems.fold(0, (sum, item) => sum + item.weight);
+    return wasteItems.fold(0, (sum, item) => sum + item.quantity);
   }
 
   Future<void> _showDeleteConfirmationDialog(int index) async {
@@ -101,10 +105,40 @@ class _ScheduleWasteState extends State<ScheduleWaste> {
     };
 
     for (var item in wasteItems) {
-      weightByType[item.type] = weightByType[item.type]! + item.weight;
+      weightByType[item.wastetype] =
+          weightByType[item.wastetype]! + item.quantity;
+    }
+    print(weightByType);
+    return weightByType;
+  }
+
+  void _submitSchedule() async {
+    if (wasteItems.isEmpty) {
+      print('No waste items to schedule');
+      return;
     }
 
-    return weightByType;
+    // Create a Schedule instance
+    final schedule = ScheduleData(
+      userId: widget.token, // Replace with actual user ID
+      wasteTypes: wasteItems,
+      scheduledDate: DateTime.now(), // Replace with actual scheduled date
+      location: 'welimada', // Replace with actual location
+    );
+
+    // Submit the schedule using the controller
+    final controller = ScheduleController();
+    await controller.scheduleWaste(schedule);
+
+    // Show success message
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Schedule submitted successfully')),
+    );
+
+    // Clear the waste items
+    setState(() {
+      wasteItems.clear();
+    });
   }
 
   @override
@@ -112,7 +146,7 @@ class _ScheduleWasteState extends State<ScheduleWaste> {
     double width = MediaQuery.of(context).size.width;
     return SingleChildScrollView(
       child: Container(
-        padding: EdgeInsets.all(8),
+        padding: const EdgeInsets.all(8),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -123,9 +157,9 @@ class _ScheduleWasteState extends State<ScheduleWaste> {
               ),
             ),
             Container(
-              padding: EdgeInsets.all(18),
+              padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: Color.fromARGB(255, 255, 255, 255),
+                color: const Color.fromARGB(255, 255, 255, 255),
                 borderRadius: BorderRadius.circular(15),
                 boxShadow: const [
                   BoxShadow(
@@ -144,7 +178,7 @@ class _ScheduleWasteState extends State<ScheduleWaste> {
                     Row(
                       children: [
                         Expanded(
-                          child: DropdownButtonFormField2<String>(
+                          child: DropdownButtonFormField<String>(
                             isExpanded: true,
                             hint: Text(
                               'Select Waste Type',
@@ -171,60 +205,9 @@ class _ScheduleWasteState extends State<ScheduleWaste> {
                                 selectedValue = value;
                               });
                             },
-                            buttonStyleData: const ButtonStyleData(
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                              height: 40,
-                              width: 200,
-                            ),
-                            dropdownStyleData: const DropdownStyleData(
-                              maxHeight: 200,
-                            ),
-                            menuItemStyleData: const MenuItemStyleData(
-                              height: 40,
-                            ),
                             decoration: const InputDecoration(
                               border: InputBorder.none,
                             ),
-                            dropdownSearchData: DropdownSearchData(
-                              searchController: textEditingController,
-                              searchInnerWidgetHeight: 50,
-                              searchInnerWidget: Container(
-                                height: 50,
-                                padding: const EdgeInsets.only(
-                                  top: 8,
-                                  bottom: 4,
-                                  right: 8,
-                                  left: 8,
-                                ),
-                                child: TextFormField(
-                                  expands: true,
-                                  maxLines: null,
-                                  controller: textEditingController,
-                                  decoration: InputDecoration(
-                                    isDense: true,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 8,
-                                    ),
-                                    hintText: 'Search for an item...',
-                                    hintStyle: const TextStyle(fontSize: 12),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              searchMatchFn: (item, searchValue) {
-                                return item.value
-                                    .toString()
-                                    .contains(searchValue);
-                              },
-                            ),
-                            onMenuStateChange: (isOpen) {
-                              if (!isOpen) {
-                                textEditingController.clear();
-                              }
-                            },
                           ),
                         )
                       ],
@@ -238,8 +221,8 @@ class _ScheduleWasteState extends State<ScheduleWaste> {
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                     Slider(
-                      thumbColor: Color.fromARGB(255, 23, 107, 135),
-                      activeColor: Color.fromARGB(255, 23, 107, 135),
+                      thumbColor: const Color.fromARGB(255, 23, 107, 135),
+                      activeColor: const Color.fromARGB(255, 23, 107, 135),
                       value: _currentSliderValue,
                       max: 100,
                       divisions: 5,
@@ -304,7 +287,7 @@ class _ScheduleWasteState extends State<ScheduleWaste> {
   Widget _buildWasteItemsList() {
     return ListView.builder(
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: wasteItems.length,
       itemBuilder: (context, index) {
         final item = wasteItems[index];
@@ -314,10 +297,10 @@ class _ScheduleWasteState extends State<ScheduleWaste> {
               Expanded(
                 child: ListTile(
                   title: Text(
-                    item.type,
-                    style: TextStyle(fontWeight: FontWeight.w600),
+                    item.wastetype,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
-                  subtitle: Text('Weight: ${item.weight}g'),
+                  subtitle: Text('Weight: ${item.quantity}g'),
                 ),
               ),
               IconButton(
@@ -326,8 +309,6 @@ class _ScheduleWasteState extends State<ScheduleWaste> {
                   Icons.remove_circle_outline,
                   color: Color.fromARGB(255, 251, 68, 68),
                 ),
-                // the method which is called
-                // when button is pressed
                 onPressed: () => _showDeleteConfirmationDialog(index),
               ),
             ],
@@ -362,11 +343,11 @@ class _ScheduleWasteState extends State<ScheduleWaste> {
                   .where((entry) => entry.value > 0)
                   .map((entry) {
                 return Container(
-                  padding: EdgeInsets.all(12),
-                  margin: EdgeInsets.symmetric(horizontal: 5),
+                  padding: const EdgeInsets.all(12),
+                  margin: const EdgeInsets.symmetric(horizontal: 5),
                   height: 75,
                   decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 65, 118, 136),
+                      color: const Color.fromARGB(255, 65, 118, 136),
                       borderRadius: BorderRadius.circular(8)),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -461,7 +442,7 @@ class _ScheduleWasteState extends State<ScheduleWaste> {
                     },
                   ),
                 ),
-                onPressed: _addItem,
+                onPressed: _submitSchedule,
                 child: const Text(
                   "Request Pickup",
                   style: TextStyle(color: Colors.white),
@@ -473,11 +454,4 @@ class _ScheduleWasteState extends State<ScheduleWaste> {
       ),
     );
   }
-}
-
-class WasteItem {
-  final String type;
-  final double weight;
-
-  WasteItem({required this.type, required this.weight});
 }
