@@ -16,13 +16,13 @@ class ScheduleData {
   final String userId;
   final List<WasteItem> wasteTypes;
   final DateTime scheduledDate;
-  final String location;
+  final String ScheduleState;
 
   ScheduleData({
     required this.userId,
     required this.wasteTypes,
     required this.scheduledDate,
-    required this.location,
+    required this.ScheduleState,
   });
 
   // Convert a ScheduleData into a Map. The keys must correspond to the names of the
@@ -31,6 +31,6 @@ class ScheduleData {
         'UserId': userId,
         'WasteType': wasteTypes.map((e) => e.toJson()).toList(),
         'ScheduledDate': scheduledDate.toIso8601String(),
-        'Location': location,
+        'ScheduleState': ScheduleState,
       };
 }

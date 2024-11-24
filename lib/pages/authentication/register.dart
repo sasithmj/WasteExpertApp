@@ -158,8 +158,14 @@ class _RegistrationState extends State<Registration> {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your name.';
                         }
+                        if (value.length < 2) {
+                          return 'Name must be at least 2 characters long.';
+                        }
                         return null;
                       },
+                    ),
+                    const SizedBox(
+                      height: 16,
                     ),
                     CustomFormField(
                       controller: _emailController,
@@ -169,11 +175,16 @@ class _RegistrationState extends State<Registration> {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your Email.';
                         }
+                        final emailRegex =
+                            RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                        if (!emailRegex.hasMatch(value)) {
+                          return 'Please enter a valid email address.';
+                        }
                         return null;
                       },
                     ),
                     const SizedBox(
-                      height: 26,
+                      height: 16,
                     ),
                     CustomFormField(
                       controller: _mobileController,
@@ -185,11 +196,15 @@ class _RegistrationState extends State<Registration> {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your mobile number.';
                         }
+                        if (value.length != 10 ||
+                            !RegExp(r'^[0-9]+$').hasMatch(value)) {
+                          return 'Please enter a valid 10-digit mobile number.';
+                        }
                         return null;
                       },
                     ),
                     const SizedBox(
-                      height: 26,
+                      height: 16,
                     ),
                     CustomFormField(
                       controller: _passwordController,
@@ -202,11 +217,16 @@ class _RegistrationState extends State<Registration> {
                         } else if (value.length < 8) {
                           return 'Password must be at least 8 characters long.';
                         }
+                        // if (!RegExp(
+                        //         r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$')
+                        //     .hasMatch(value)) {
+                        //   return 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.';
+                        // }
                         return null;
                       },
                     ),
                     const SizedBox(
-                      height: 26,
+                      height: 16,
                     ),
                     CustomFormField(
                       controller: _confirmPasswordController,
@@ -216,6 +236,9 @@ class _RegistrationState extends State<Registration> {
                       validator: (String? value) {
                         if (value == null || value.isEmpty) {
                           return 'Please confirm your password.';
+                        }
+                        if (value != _passwordController.text) {
+                          return 'Passwords do not match.';
                         }
                         return null;
                       },
@@ -289,18 +312,18 @@ class _RegistrationState extends State<Registration> {
                         ),
                       ],
                     ),
-                    TextButton.icon(
-                      icon: Image.asset(
-                        "assets/googleIcon.png",
-                        width: 24,
-                        height: 24,
-                      ),
-                      onPressed: () => {},
-                      label: const Text(
-                        "Continue with google",
-                        style: TextStyle(color: Colors.black54),
-                      ),
-                    ),
+                    // TextButton.icon(
+                    //   icon: Image.asset(
+                    //     "assets/googleIcon.png",
+                    //     width: 24,
+                    //     height: 24,
+                    //   ),
+                    //   onPressed: () => {},
+                    //   label: const Text(
+                    //     "Continue with google",
+                    //     style: TextStyle(color: Colors.black54),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

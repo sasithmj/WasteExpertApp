@@ -6,8 +6,10 @@ import 'package:wasteexpert/widgets/home/week_number.dart';
 
 class Home extends StatefulWidget {
   final Function onRequestPickup;
+  // Accept nearby bins
+  final String userId;
 
-  const Home({super.key, required this.onRequestPickup});
+  const Home({super.key, required this.onRequestPickup, required this.userId});
 
   @override
   State<Home> createState() => _HomeState();
@@ -20,7 +22,7 @@ class _HomeState extends State<Home> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          WeekNumber(),
+          WeekNumber(userId: widget.userId),
           RequestPickup(onRequestPickup: widget.onRequestPickup),
           ShowPoints(),
           NearByBins(),

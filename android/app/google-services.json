@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "961049919020",
+    "project_id": "wasteexpert-64848",
+    "storage_bucket": "wasteexpert-64848.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:961049919020:android:7838c82b646c48a04fdb89",
+        "android_client_info": {
+          "package_name": "com.example.wasteexpert"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMCBc_l9L6HSFqDFA1M-eNhh_8bWYQ52A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

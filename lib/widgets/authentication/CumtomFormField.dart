@@ -1,7 +1,6 @@
-// custom_form_field.dart
 import 'package:flutter/material.dart';
 
-class CustomFormField extends StatelessWidget {
+class CustomFormField extends StatefulWidget {
   final TextEditingController controller;
   final String label;
   final String hintText;
@@ -22,12 +21,25 @@ class CustomFormField extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _CustomFormFieldState createState() => _CustomFormFieldState();
+}
+
+class _CustomFormFieldState extends State<CustomFormField> {
+  late bool _obscureText;
+
+  @override
+  void initState() {
+    super.initState();
+    _obscureText = widget.obscureText;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
+          widget.label,
           style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
         ),
         Container(
@@ -36,17 +48,40 @@ class CustomFormField extends StatelessWidget {
             color: const Color.fromARGB(255, 243, 247, 247),
           ),
           child: TextFormField(
-            controller: controller,
+            controller: widget.controller,
             decoration: InputDecoration(
-              hintText: hintText,
+              hintText: widget.hintText,
               hintStyle: const TextStyle(color: Colors.black26),
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 15.0),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 15.0,
+                vertical:
+                    16.0, // Add vertical padding to align text with suffix
+              ),
+              suffixIcon: widget.obscureText
+                  ? Padding(
+                      padding: const EdgeInsets.only(
+                          right: 12.0), // Adjust right padding
+                      child: IconButton(
+                        icon: Icon(
+                          _obscureText
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscureText = !_obscureText;
+                          });
+                        },
+                      ),
+                    )
+                  : null,
             ),
-            obscureText: obscureText,
-            keyboardType: keyboardType,
-            maxLength: maxLength != 0 ? maxLength : null,
-            validator: validator,
+            obscureText: _obscureText,
+            keyboardType: widget.keyboardType,
+            maxLength: widget.maxLength != 0 ? widget.maxLength : null,
+            validator: widget.validator,
           ),
         ),
       ],

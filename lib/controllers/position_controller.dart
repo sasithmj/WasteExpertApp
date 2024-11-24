@@ -35,4 +35,10 @@ class PositionController {
     }
     return null;
   }
+
+  Future<Position?> getCurrentLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    return position;
+  }
 }

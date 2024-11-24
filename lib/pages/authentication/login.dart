@@ -261,25 +261,25 @@ class _LoginState extends State<Login> {
                       ),
                     ],
                   ),
-                  const Divider(
-                    height: 30,
-                    color: Colors.black26,
-                  ),
-                  const SizedBox(height: 10),
-                  Center(
-                    child: TextButton.icon(
-                      onPressed: () {},
-                      icon: Image.asset(
-                        "assets/googleIcon.png",
-                        width: 24,
-                        height: 24,
-                      ),
-                      label: const Text(
-                        "Continue with Google",
-                        style: TextStyle(color: Colors.black54),
-                      ),
-                    ),
-                  ),
+                  // const Divider(
+                  //   height: 30,
+                  //   color: Colors.black26,
+                  // ),
+                  // const SizedBox(height: 10),
+                  // Center(
+                  //   child: TextButton.icon(
+                  //     onPressed: () {},
+                  //     icon: Image.asset(
+                  //       "assets/googleIcon.png",
+                  //       width: 24,
+                  //       height: 24,
+                  //     ),
+                  //     label: const Text(
+                  //       "Continue with Google",
+                  //       style: TextStyle(color: Colors.black54),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
