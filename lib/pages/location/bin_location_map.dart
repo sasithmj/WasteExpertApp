@@ -178,7 +178,7 @@ class _BinMapState extends State<BinMap> {
       _isLoading = true;
     });
 
-    String apiKey = 'AIzaSyBG3Ua3R0x4emKkYNkGan-Ds2dDvFUaEmM';
+    String apiKey = 'YOUR API KEY HERE';
     String url =
         'https://maps.googleapis.com/maps/api/directions/json?origin=${_currentPosition!.latitude},${_currentPosition!.longitude}&destination=$binLat,$binLng&key=$apiKey';
 
