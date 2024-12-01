@@ -1,16 +1,61 @@
-# wasteexpert
+# WasteExpert 🚮♻️
 
-A new Flutter project.
+## Project Overview
 
-## Getting Started
+WasteExpert is an innovative waste management system designed to revolutionize waste collection and recycling in Sri Lanka. Our mobile application empowers residents to take an active role in maintaining a clean environment through smart technology and community engagement. 🌍🌱
 
-This project is a starting point for a Flutter application.
+### Key Features 🌟
 
-A few resources to get you started if this is your first Flutter project:
+- **Smart Bin Tracking** 📍
+  - Real-time monitoring of waste bin fill levels
+  - Interactive map showing bin locations
+  - Automatic collection notifications
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- **Waste Collection Scheduling** 📅
+  - On-demand pickup scheduling
+  - Location-based waste reporting
+  - Easy waste type selection
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- **Image Recognition** 🖼️
+  - AI-powered waste sorting assistance
+  - Recommends appropriate disposal bins
+  - Helps improve waste segregation
+
+- **Rewards Program** 🏆
+  - Points-based system for responsible waste disposal
+  - Incentivizes recycling and community participation
+  - Redeemable rewards for environmentally friendly actions
+
+### Technologies Used 💻
+
+#### Frontend
+- **Flutter** for cross-platform mobile app development
+- Responsive and intuitive user interface
+- Available for Android 
+
+#### Backend
+- **Node.js** for robust server-side logic
+- **Firebase** for real-time database and authentication
+- **Google Cloud Technologies** for IoT integration
+
+#### Additional Technologies
+- **MongoDB** for data storage
+- **Google Cloud IoT** for smart bin sensor management
+- **Image Recognition AI** for waste sorting
+
+### Project Screenshots 📸
+
+[You can add your screenshots here from the project report's Appendix A]
+
+### Installation 🛠️
+
+#### Prerequisites
+- Flutter SDK
+- Node.js
+- Firebase Account
+- Google Cloud Account
+
+### Contact 📬
+- Contact: sasithmjayaweera@gmail.com
+
+**Made with ❤️ for a Cleaner, Greener Future!** 🌎♻️
